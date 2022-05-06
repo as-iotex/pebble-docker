@@ -51,10 +51,15 @@ RUN mkdir /workdir/project && \
     else \
         echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
     fi && \
+    wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && \
+    tar -jxvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && \
+    mv gcc-arm-none-eabi-9-2020-q2-update  ~/gnuarmemb && \
+    echo 'export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb' >> ~/.zephyrrc  && \
+    echo 'export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb"' >> ~/.zephyrrc && \
     # Latest PIP & Python dependencies
     python3 -m pip install -U pip && \
     python3 -m pip install -U setuptools && \
-    python3 -m pip install cmake>=3.20.0 wheel && \
+    python3 -m pip install 'cmake>=3.20.0' wheel && \
     python3 -m pip install -U west==0.12.0 && \
     python3 -m pip install -U nrfutil && \
     python3 -m pip install pc_ble_driver_py && \
@@ -68,15 +73,24 @@ RUN mkdir /workdir/project && \
 
 # Download sdk-nrf and west dependencies to install pip requirements
 FROM base
-ARG sdk_nrf_revision=main
+ARG sdk_nrf_revision=v1.4.0
+ARG  zephyr_revision=v2.4.0-ncs1
+SHELL ["/bin/bash", "-c"]
 RUN \
-    mkdir tmp && cd tmp && \
-    west init -m https://github.com/nrfconnect/sdk-nrf --mr ${sdk_nrf_revision} && \
-    west update --narrow -o=--depth=1 && \
+    mkdir /workdir/sdk && cd /workdir/sdk && \
+    git  clone  -b "${sdk_nrf_revision}" https://github.com/iotexproject/pebble-firmware-legacy.git && \
+    cd pebble-firmware-legacy && \
+    git clone -b "${zephyr_revision}" https://github.com/nrfconnect/sdk-zephyr  zephyr && \
+    west update --narrow -o=--depth=1 || : && \
     python3 -m pip install -r zephyr/scripts/requirements.txt && \
     python3 -m pip install -r nrf/scripts/requirements.txt && \
     python3 -m pip install -r bootloader/mcuboot/scripts/requirements.txt && \
-    cd .. && rm -rf tmp
+    cd /workdir/project && \
+    git clone -b aries https://github.com/iotexproject/pebble-firmware.git && \
+    source   /workdir/sdk/pebble-firmware-legacy/zephyr/zephyr-env.sh && \
+    rm   -rf   build/  && \
+    west   zephyr-export  && \
+    west  build   -b   iotex_pebble_hw30ns   pebble-firmware/nrf/applications/Aries
 
 WORKDIR /workdir/project
 ENV LC_ALL=C.UTF-8
