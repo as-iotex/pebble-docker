@@ -1,0 +1,15 @@
+{
+    "files.exclude": 
+    {
+        "build/**" : true,
+        "sdk/**": true
+    },
+    "files.watcherExclude": 
+    {
+        "build/**" : true,
+        "sdk/**": true
+    },
+    "nrf-connect.topdir": "${workspaceFolder}/sdk",
+    "nrf-connect.toolchain.path": "PATH",
+    "nrf-connect.applications": []
+}
