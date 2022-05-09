@@ -2,7 +2,7 @@
     "files.exclude": 
     {
         "build/**" : true,
-        "sdk/**": true
+        "sdk/**": false
     },
     "files.watcherExclude": 
     {
