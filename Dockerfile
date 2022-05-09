@@ -1,11 +1,10 @@
 # Base image which contains global dependencies
 FROM ubuntu:20.04 as base
-WORKDIR /workdir
 
 # System dependencies
 ARG arch=amd64
-RUN mkdir /workdir/project && \
-    mkdir /workdir/.cache && \
+RUN mkdir /project && \
+    mkdir /.cache && \
     apt-get -y update && \
     apt-get -y upgrade && \
     apt-get -y install \
@@ -22,22 +21,7 @@ RUN mkdir /workdir/project && \
         device-tree-compiler=1.5.1-1 \
         ruby && \
     apt-get -y clean && apt-get -y autoremove && \
-    # GCC ARM Embed Toolchain
-    echo "Target architecture: $arch" && \
-    case $arch in \
-        "amd64") \
-            NCLT_URL="https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/10-15-0/nrf-command-line-tools-10.15.0_amd.zip" \
-            ARM_URL="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2?revision=05382cca-1721-44e1-ae19-1e7c3dc96118&hash=CEB1348BF26C0285FD788E2424773FA304921735" \
-            ;; \
-        "arm64") \
-            NCLT_URL="" \
-            ARM_URL="https://developer.arm.com/-/media/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-aarch64-linux.tar.bz2?revision=7166404a-b4f5-4598-ac75-e5f8b90abb09&hash=677A37572111E71B45A8B287789549356B0E4E71" \
-            ;; \
-        *) \
-            echo "Unsupported TARGETARCH: \"$TARGETARCH\"" >&2 && \
-            exit 1 ;; \
-    esac && \
-    wget -qO - "${ARM_URL}" | tar xj && \
+
     # Nordic command line tools
     # Releases: https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Command-Line-Tools/Download
     # Doesn't exist for arm64, but not necessary for building
@@ -51,11 +35,14 @@ RUN mkdir /workdir/project && \
     else \
         echo "Skipping nRF Command Line Tools (not available for $arch)" ; \
     fi && \
+
+    # GCC ARM Embed Toolchain
     wget -q https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/9-2020q2/gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && \
     tar -jxvf gcc-arm-none-eabi-9-2020-q2-update-x86_64-linux.tar.bz2 && \
     mv gcc-arm-none-eabi-9-2020-q2-update  ~/gnuarmemb && \
     echo 'export ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb' >> ~/.zephyrrc  && \
     echo 'export GNUARMEMB_TOOLCHAIN_PATH="~/gnuarmemb"' >> ~/.zephyrrc && \
+
     # Latest PIP & Python dependencies
     python3 -m pip install -U pip && \
     python3 -m pip install -U setuptools && \
@@ -63,41 +50,17 @@ RUN mkdir /workdir/project && \
     python3 -m pip install -U west==0.12.0 && \
     python3 -m pip install -U nrfutil && \
     python3 -m pip install pc_ble_driver_py && \
+
     # Newer PIP will not overwrite distutils, so upgrade PyYAML manually
     python3 -m pip install --ignore-installed -U PyYAML
-    # # ClangFormat
+
+    # ClangFormat
     # python3 -m pip install -U six && \
     # apt-get -y install clang-format-9 && \
     # ln -s /usr/bin/clang-format-9 /usr/bin/clang-format && \
-    # wget -qO- https://raw.githubusercontent.com/nrfconnect/sdk-nrf/main/.clang-format > /workdir/.clang-format
+    # wget -qO- https://raw.githubusercontent.com/nrfconnect/sdk-nrf/main/.clang-format > /.clang-format
 
-# Download sdk-nrf and west dependencies to install pip requirements
-FROM base
-ARG sdk_nrf_revision=v1.4.0
-ARG  zephyr_revision=v2.4.0-ncs1
-SHELL ["/bin/bash", "-c"]
-RUN \
-    mkdir /workdir/sdk && cd /workdir/sdk && \
-    git  clone  -b "${sdk_nrf_revision}" https://github.com/iotexproject/pebble-firmware-legacy.git && \
-    cd pebble-firmware-legacy && \
-    git clone -b "${zephyr_revision}" https://github.com/nrfconnect/sdk-zephyr  zephyr && \
-    west update --narrow -o=--depth=1 || : && \
-    python3 -m pip install -r zephyr/scripts/requirements.txt && \
-    python3 -m pip install -r nrf/scripts/requirements.txt && \
-    python3 -m pip install -r bootloader/mcuboot/scripts/requirements.txt && \
-    cd /workdir/project && \
-    git clone -b aries https://github.com/iotexproject/pebble-firmware.git && \
-    source   /workdir/sdk/pebble-firmware-legacy/zephyr/zephyr-env.sh && \
-    rm   -rf   build/  && \
-    west   zephyr-export  && \
-    west  build   -b   iotex_pebble_hw30ns   pebble-firmware/nrf/applications/Aries
-
-WORKDIR /workdir/project
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-ENV XDG_CACHE_HOME=/workdir/.cache
 ENV ZEPHYR_TOOLCHAIN_VARIANT=gnuarmemb
-ENV GNUARMEMB_TOOLCHAIN_PATH=/workdir/gcc-arm-none-eabi-9-2020-q2-update
-ENV ZEPHYR_BASE=/workdir/project/zephyr
-ENV PATH="${GNUARMEMB_TOOLCHAIN_PATH}/bin:${PATH}"
-ENV PATH="${ZEPHYR_BASE}/scripts:${PATH}"
+ENV GNUARMEMB_TOOLCHAIN_PATH=~/gnuarmemb

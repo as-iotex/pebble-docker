@@ -1,0 +1,24 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.231.5/containers/docker-existing-dockerfile
+{
+	"name": "Pebble Firmware",
+
+	"dockerFile": "../Dockerfile",
+	
+	// Sets the run context to one level up instead of the .devcontainer folder.
+	"context": "..",
+		
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [],
+
+	"initializeCommand": "./initialize.sh",
+
+	// Uncomment the next line to run commands after the container is created - for example installing curl.
+	"postCreateCommand": "./postCreate.sh",
+
+	// Uncomment when using a ptrace-based debugger like C++, Go, and Rust
+	"runArgs": [ "--env-file", "${localWorkspaceFolder}/.env" ],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+}
