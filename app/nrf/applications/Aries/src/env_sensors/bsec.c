@@ -72,12 +72,12 @@ static struct env_sensor air_quality_sensor = {
 static K_THREAD_STACK_DEFINE(thread_stack, STACKSIZE);
 static struct k_thread thread;
 
-static u8_t s_state_buffer[BSEC_MAX_STATE_BLOB_SIZE];
-static s32_t s_state_buffer_len;
+static uint8_t s_state_buffer[BSEC_MAX_STATE_BLOB_SIZE];
+static int32_t s_state_buffer_len;
 
 static struct k_delayed_work env_sensors_poller;
 static env_sensors_data_ready_cb data_ready_cb;
-static u32_t data_send_interval_s = CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL;
+static uint32_t data_send_interval_s = CONFIG_ENVIRONMENT_DATA_SEND_INTERVAL;
 static bool backoff_enabled;
 static bool initialized;
 
@@ -125,18 +125,18 @@ static int enable_settings(void)
     return 0;
 }
 
-static int8_t bus_write(u8_t dev_addr, u8_t reg_addr,
-            u8_t *reg_data_ptr, u16_t data_len)
+static int8_t bus_write(uint8_t dev_addr, uint8_t reg_addr,
+            uint8_t *reg_data_ptr, uint16_t data_len)
 {
-    u8_t buf[data_len+1];
+    uint8_t buf[data_len+1];
 
     buf[0] = reg_addr;
     memcpy(&buf[1], reg_data_ptr, data_len);
     return i2c_write(i2c_master, buf, data_len+1, dev_addr);
 }
 
-static s8_t bus_read(u8_t dev_addr, u8_t reg_addr,
-             u8_t *reg_data_ptr, u16_t data_len)
+static s8_t bus_read(uint8_t dev_addr, uint8_t reg_addr,
+             uint8_t *reg_data_ptr, uint16_t data_len)
 {
     return i2c_write_read(i2c_master, dev_addr, &reg_addr,
                   1, reg_data_ptr, data_len);
@@ -147,12 +147,12 @@ static s64_t get_timestamp_us(void)
     return k_uptime_get()*1000;
 }
 
-static void delay_ms(u32_t period)
+static void delay_ms(uint32_t period)
 {
     k_sleep(K_MSEC(period));
 }
 
-static void output_ready(s64_t timestamp, float iaq, u8_t iaq_accuracy,
+static void output_ready(s64_t timestamp, float iaq, uint8_t iaq_accuracy,
             float temperature, float humidity, float pressure,
             float raw_temperature, float raw_humidity, float gas,
             bsec_library_return_t bsec_status, float static_iaq,
@@ -175,7 +175,7 @@ static void output_ready(s64_t timestamp, float iaq, u8_t iaq_accuracy,
     k_spin_unlock(&(air_quality_sensor.lock), key);
 }
 
-static u32_t state_load(u8_t *state_buffer, u32_t n_buffer)
+static uint32_t state_load(uint8_t *state_buffer, uint32_t n_buffer)
 {
 #if 0
     if ((s_state_buffer_len > 0) && (s_state_buffer_len <= n_buffer)) {
@@ -195,7 +195,7 @@ static u32_t state_load(u8_t *state_buffer, u32_t n_buffer)
     }
 }
 
-static void state_save(const u8_t *state_buffer, u32_t length)
+static void state_save(const uint8_t *state_buffer, uint32_t length)
 {
     /* settings_save_one("bsec/state", state_buffer, length);     */
     iotex_local_storage_del(SID_BME680_STA);
@@ -205,7 +205,7 @@ static void state_save(const u8_t *state_buffer, u32_t length)
     /* printk("state_save : %d \n", length); */
 }
 
-static u32_t config_load(u8_t *config_buffer, u32_t n_buffer)
+static uint32_t config_load(uint8_t *config_buffer, uint32_t n_buffer)
 {
     /* Not implemented */
     return 0;
@@ -268,11 +268,11 @@ int env_sensors_get_air_quality(env_sensor_data_t *sensor_data)
     return 0;
 }
 
-static inline int submit_poll_work(const u32_t delay_s)
+static inline int submit_poll_work(const uint32_t delay_s)
 {
     return k_delayed_work_submit_to_queue(env_sensors_work_q,
                           &env_sensors_poller,
-                          K_SECONDS((u32_t)delay_s));
+                          K_SECONDS((uint32_t)delay_s));
 }
 
 int env_sensors_poll(void)
@@ -342,7 +342,7 @@ int env_sensors_init_and_start(struct k_work_q *work_q,
     return 0;
 }
 
-void env_sensors_set_send_interval(const u32_t interval_s)
+void env_sensors_set_send_interval(const uint32_t interval_s)
 {
     if (interval_s == data_send_interval_s) {
         return;
@@ -362,7 +362,7 @@ void env_sensors_set_send_interval(const u32_t interval_s)
     }
 }
 
-u32_t env_sensors_get_send_interval(void)
+uint32_t env_sensors_get_send_interval(void)
 {
     return data_send_interval_s;
 }

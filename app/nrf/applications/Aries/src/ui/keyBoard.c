@@ -44,12 +44,12 @@ bool IsDownPressed(void) {
 }
 
 bool isUpKeyStartupPressed(void) {
-    u32_t key = gpio_pin_get(__gpio0_dev, IO_UP_KEY);
+    uint32_t key = gpio_pin_get(__gpio0_dev, IO_UP_KEY);
     return key == 0;
 }
 
 bool isDownKeyStartupPressed(void) {
-    u32_t key = gpio_pin_get(__gpio0_dev, IO_DOWN_KEY);
+    uint32_t key = gpio_pin_get(__gpio0_dev, IO_DOWN_KEY);
     return key == 0;
 }
 
@@ -57,8 +57,8 @@ bool isComninationKeys(enum USER_KEY_DEF combination_keys) {
     return ((combinationKeys & combination_keys) == combination_keys);
 }
 
-static void up_key_callback(struct device *port, struct gpio_callback *cb, u32_t pins) {
-    u32_t key = gpio_pin_get(port, IO_UP_KEY);
+static void up_key_callback(struct device *port, struct gpio_callback *cb, uint32_t pins) {
+    uint32_t key = gpio_pin_get(port, IO_UP_KEY);
     if (key > 0) {
         pressedKey |= KB_UP_KEY;
         key = gpio_pin_get(port, POWER_KEY);
@@ -73,8 +73,8 @@ static void up_key_callback(struct device *port, struct gpio_callback *cb, u32_t
     }
 }
 
-static void down_key_callback(struct device *port, struct gpio_callback *cb, u32_t pins) {
-    u32_t key = gpio_pin_get(port, IO_DOWN_KEY);
+static void down_key_callback(struct device *port, struct gpio_callback *cb, uint32_t pins) {
+    uint32_t key = gpio_pin_get(port, IO_DOWN_KEY);
     if (key > 0) {
         pressedKey |= KB_DOWN_KEY;
         combinationKeys &= ~KB_DOWN_KEY;
@@ -85,8 +85,8 @@ static void down_key_callback(struct device *port, struct gpio_callback *cb, u32
     }
 }
 
-static void pwr_key_callback(struct device *port, struct gpio_callback *cb, u32_t pins) {
-    u32_t pwr_key = gpio_pin_get(port, POWER_KEY);
+static void pwr_key_callback(struct device *port, struct gpio_callback *cb, uint32_t pins) {
+    uint32_t pwr_key = gpio_pin_get(port, POWER_KEY);
     if (0 == pwr_key) {
         pressedKey |= KB_POWER_KEY;
         combinationKeys |= KB_POWER_KEY;

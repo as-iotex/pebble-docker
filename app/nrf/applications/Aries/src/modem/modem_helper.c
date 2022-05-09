@@ -5,6 +5,8 @@
 #include <string.h>
 #include <logging/log.h>
 #include "modem_helper.h"
+#include "hal/hal_gpio.h"
+
 
 
 LOG_MODULE_REGISTER(modem_helper, CONFIG_ASSET_TRACKER_LOG_LEVEL);
@@ -222,7 +224,7 @@ bool getModeVer(uint8_t *buf) {
         return false;
     }
 
-    sprintf(buf, vbat_ack + 13);
+    // sprintf(buf, vbat_ack + 13);
     err = strlen(buf);
     buf[err - 1] = 0;
     buf[err - 2] = 0;

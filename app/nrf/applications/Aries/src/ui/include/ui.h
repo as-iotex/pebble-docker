@@ -159,7 +159,7 @@ struct ui_evt {
     enum ui_evt_type type;
 
     union {
-        u32_t button;
+        uint32_t button;
     };
 };
 
@@ -194,7 +194,7 @@ void ui_led_set_pattern(enum ui_led_pattern pattern);
  * @param led LED number to be controlled.
  * @param value 0 turns the LED off, a non-zero value turns the LED on.
  */
-void ui_led_set_state(u32_t led, u8_t value);
+void ui_led_set_state(uint32_t led, uint8_t value);
 
 /**
  * @brief Gets the LED pattern.
@@ -212,7 +212,7 @@ enum ui_led_pattern ui_led_get_pattern(void);
  *
  * @return 0 on success or negative error value on failure.
  */
-int ui_led_set_color(u8_t red, u8_t green, u8_t blue);
+int ui_led_set_color(uint8_t red, uint8_t green, uint8_t blue);
 
 /**
  * @brief Get the state of a button.
@@ -221,7 +221,7 @@ int ui_led_set_color(u8_t red, u8_t green, u8_t blue);
  *
  * @return 1 if button is active, 0 if it's inactive.
  */
-bool ui_button_is_active(u32_t button);
+bool ui_button_is_active(uint32_t button);
 
 /**
  * @brief Set the buzzer frequency.
@@ -234,7 +234,7 @@ bool ui_button_is_active(u32_t button);
  *
  * @return 0 on success or negative error value on failure.
  */
-int ui_buzzer_set_frequency(u32_t frequency, u8_t intensity);
+int ui_buzzer_set_frequency(uint32_t frequency, uint8_t intensity);
 
 /**
  * @brief Write value to pin controlling NMOS transistor.
@@ -244,7 +244,7 @@ int ui_buzzer_set_frequency(u32_t frequency, u8_t intensity);
  *
  * @return 0 on success or negative error value on failure.
  */
-int ui_nmos_write(size_t nmos_idx, u8_t value);
+int ui_nmos_write(size_t nmos_idx, uint8_t value);
 
 /**
  * @brief Control NMOS with PWM signal.
@@ -254,12 +254,12 @@ int ui_nmos_write(size_t nmos_idx, u8_t value);
  *
  * @return 0 on success or negative error value on failure.
  */
-int ui_nmos_pwm_set(size_t nmos_idx, u32_t period, u32_t pulse);
+int ui_nmos_pwm_set(size_t nmos_idx, uint32_t period, uint32_t pulse);
 
-void ui_led_active(u8_t mask, u8_t flg);
-void ui_led_deactive(u8_t mask, u8_t flg);
+void ui_led_active(uint8_t mask, uint8_t flg);
+void ui_led_deactive(uint8_t mask, uint8_t flg);
 int onBeepMePressed(int ms);
-bool isMask(u8_t mask);
+bool isMask(uint8_t mask);
 void SetIndicator(int indct);
 #ifdef __cplusplus
 }

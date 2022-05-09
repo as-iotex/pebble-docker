@@ -39,8 +39,8 @@ LOG_MODULE_REGISTER(gps_control, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
 static  struct device *guart_dev_gps;
 struct device *gpsPower;
-static u8_t uart_buf1[128];
-static u8_t pos1=0;
+static uint8_t uart_buf1[128];
+static uint8_t pos1=0;
 static uint8_t  bGpsHead = 0;
 const char strGRMC[7] = "$GNRMC";
 
@@ -101,7 +101,7 @@ void gpsPackageParseHandle(struct k_work *work) {
     uart_irq_rx_enable(guart_dev_gps);
 }
 
-static void uart_gps_rx_handler(u8_t character) {
+static void uart_gps_rx_handler(uint8_t character) {
     if (!bGpsHead) {
         if (0x24 == character) {
             pos1 = 1;
@@ -139,7 +139,7 @@ static void uart_gps_rx_handler(u8_t character) {
 
 static void uart_gps_cb(struct device *dev)
 {
-    u8_t character;
+    uint8_t character;
 
     uart_irq_update(dev);
 

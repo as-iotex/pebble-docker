@@ -20,7 +20,7 @@ static double accel_offset[3];
 
 int orientation_detector_poll(struct orientation_detector_sensor_data *sensor_data) {
     int err;
-    u8_t i;
+    uint8_t i;
     double aggregated_data[3] = {0};
     struct sensor_value accel_data[3];
     enum orientation_state current_orientation;
@@ -66,7 +66,7 @@ int orientation_detector_poll(struct orientation_detector_sensor_data *sensor_da
 }
 
 int orientation_detector_calibrate(void) {
-    u8_t i;
+    uint8_t i;
     int err;
     struct sensor_value accel_data[3];
     double aggregated_data[3] = {0};

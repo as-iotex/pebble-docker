@@ -156,33 +156,33 @@ void RestartEnvWork(int s) {
 
 /*  mqtt cert write into modem */
 void WriteCertIntoModem(uint8_t *cert, uint8_t *key, uint8_t *root ) {
-    u8_t *certificates[] = {root, key, cert};
+    uint8_t *certificates[] = {root, key, cert};
     size_t cert_len[] = { strlen(root), strlen(key), strlen(cert) };
     int err;
     sec_tag_t sec_tag = CONFIG_CLOUD_CERT_SEC_TAG;
-    enum modem_key_mgnt_cred_type cred[] = {
-        MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
-        MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
-        MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
-    };
+    // enum modem_key_mgnt_cred_type cred[] = {
+    //     MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
+    //     MODEM_KEY_MGMT_CRED_TYPE_PRIVATE_CERT,
+    //     MODEM_KEY_MGMT_CRED_TYPE_PUBLIC_CERT,
+    // };
     /* wait for modem flash writing over */
     if(atomic_get(&modemWriteProtect))
         return;
 
     disableModem();
     /* Delete certificates */
-    for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
-        err = modem_key_mgmt_delete(sec_tag, type);
-        LOG_ERR("modem_key_mgmt_delete(%u, %d) => result=%d\n",
-                sec_tag, type, err);
-    }
+    // for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
+    //     err = modem_key_mgmt_delete(sec_tag, type);
+    //     LOG_ERR("modem_key_mgmt_delete(%u, %d) => result=%d\n",
+    //             sec_tag, type, err);
+    // }
 
-    /* Write certificates */
-    for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
-        err = modem_key_mgmt_write(sec_tag, cred[type],
-                certificates[type], cert_len[type]);
-        LOG_ERR("modem_key_mgmt_write => result=%d\n", err);
-    }
+    // /* Write certificates */
+    // for (enum modem_key_mgnt_cred_type type = 0; type < 3; type++) {
+    //     err = modem_key_mgmt_write(sec_tag, cred[type],
+    //             certificates[type], cert_len[type]);
+    //     LOG_ERR("modem_key_mgmt_write => result=%d\n", err);
+    // }
 }
 
 /*  Upload sensor data regularly */

@@ -6,7 +6,7 @@
 #include <zephyr.h>
 #include <drivers/gpio.h>
 #include <drivers/flash.h>
-#include <bsd.h>
+// #include <bsd.h>
 #include <modem/lte_lc.h>
 #include <modem/at_cmd.h>
 #include <modem/at_notif.h>

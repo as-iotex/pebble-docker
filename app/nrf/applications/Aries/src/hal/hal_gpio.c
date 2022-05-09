@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(hal_gpio, CONFIG_ASSET_TRACKER_LOG_LEVEL);
 
 #define UART_COMTOOL  "UART_1"   
 struct device *__gpio0_dev;
-static u32_t g_key_press_start_time;
+static uint32_t g_key_press_start_time;
 static struct gpio_callback chrq_gpio_cb, pwr_key_gpio_cb;
 static struct device *guart_dev_comtool;
 static atomic_val_t uartReceiveLen = ATOMIC_INIT(0);
@@ -40,7 +40,7 @@ extern atomic_val_t modemWriteProtect;
 /* extern struct k_delayed_work  event_work; */
 
 void checkCHRQ(void) {
-    u32_t chrq;
+    uint32_t chrq;
     chrq = gpio_pin_get(__gpio0_dev, IO_NCHRQ);
     if (!chrq) {
         /*  charging */
@@ -60,12 +60,12 @@ void CtrlBlueLED(bool on_off) {
         gpio_pin_write(__gpio0_dev, LED_BLUE, LED_OFF);
 }
 
-static void chrq_input_callback(struct device *port, struct gpio_callback *cb, u32_t pins) {
+static void chrq_input_callback(struct device *port, struct gpio_callback *cb, uint32_t pins) {
     checkCHRQ();
 }
 
-static void pwr_key_callback(struct device *port, struct gpio_callback *cb, u32_t pins) {
-    u32_t pwr_key, end_time;
+static void pwr_key_callback(struct device *port, struct gpio_callback *cb, uint32_t pins) {
+    uint32_t pwr_key, end_time;
     int32_t key_press_duration, ret;
 
     pwr_key = gpio_pin_get(port, POWER_KEY);

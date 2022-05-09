@@ -47,7 +47,7 @@ int iotex_hal_adc_init(void) {
         .reference = ADC_REFERENCE,
         .acquisition_time = ADC_ACQUISITION_TIME,
         .channel_id = ADC_1ST_CHANNEL_ID,
-        .input_positive = ADC_1ST_CHANNEL_INPUT,
+        // .input_positive = ADC_1ST_CHANNEL_INPUT,
         .differential = 0,
     };
 
@@ -59,7 +59,7 @@ int iotex_hal_adc_init(void) {
     if (err) {
         LOG_ERR("Error in adc setup: %d\n", err);
     }
-    NRF_SAADC_NS->TASKS_CALIBRATEOFFSET = 1;
+    // NRF_SAADC_NS->TASKS_CALIBRATEOFFSET = 1;
     iotex_hal_adc_sample();
     return err;
 }

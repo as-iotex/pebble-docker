@@ -32,44 +32,44 @@ atomic_val_t send_data_enable;
 static struct k_delayed_work cloud_reboot_work;
 static uint8_t devSt = 0;
 /* Buffers for MQTT client. */
-static u8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
-static u8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
+static uint8_t rx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t tx_buffer[CONFIG_MQTT_MESSAGE_BUFFER_SIZE];
+static uint8_t payload_buf[CONFIG_MQTT_PAYLOAD_BUFFER_SIZE];
 static uint32_t cnt = 0;
 const uint8_t *pmqttBrokerHost = "a11homvea4zo8t-ats.iot.ap-east-1.amazonaws.com";
 
 
 extern void mqttGetResponse(void);
 
-static void iotex_mqtt_get_topic(u8_t *buf, int len) {
+static void iotex_mqtt_get_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "device/%s/%s/data",iotex_mqtt_get_client_id(), BACKEND_ID);
 }
 
-static void iotex_mqtt_get_firm_topic(u8_t *buf, int len) {
+static void iotex_mqtt_get_firm_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "backend/%s/firmware",iotex_mqtt_get_client_id());
 }
 
-static void iotex_get_heart_beat_topic(u8_t *buf, int len) {
+static void iotex_get_heart_beat_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "device/%s/action/update-state",iotex_mqtt_get_client_id());
 }
 
-static void iotex_mqtt_get_config_topic(u8_t *buf, int len) {
+static void iotex_mqtt_get_config_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "backend/%s/config",iotex_mqtt_get_client_id());
 }
 
-static void iotex_mqtt_get_reg_topic(u8_t *buf, int len) {
+static void iotex_mqtt_get_reg_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "backend/%s/status",iotex_mqtt_get_client_id());
 }
 
-static void iotex_mqtt_get_ownership_topic(u8_t *buf, int len) {
+static void iotex_mqtt_get_ownership_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "device/%s/confirm",iotex_mqtt_get_client_id());
 }
 
-static void iotex_mqtt_query_topic(u8_t *buf, int len) {
+static void iotex_mqtt_query_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "device/%s/query",iotex_mqtt_get_client_id());
 }
 
-static void  iotex_mqtt_backend_ack_topic(u8_t *buf, int len) {
+static void  iotex_mqtt_backend_ack_topic(uint8_t *buf, int len) {
     snprintf(buf, len, "backend/%s/status",iotex_mqtt_get_client_id());
 }
 
@@ -250,7 +250,7 @@ static int subscribe_regist_topic(struct mqtt_client *client) {
 }
 
 /**@brief Function to print strings without null-termination. */
-static void data_print(u8_t *prefix, u8_t *data, size_t len) {
+static void data_print(uint8_t *prefix, uint8_t *data, size_t len) {
     char buf[len + 1];
     memcpy(buf, data, len);
     buf[len] = 0;
@@ -260,9 +260,9 @@ static void data_print(u8_t *prefix, u8_t *data, size_t len) {
 /*
  * @brief Function to read the published payload.
  */
-static int publish_get_payload(struct mqtt_client *c, u8_t *write_buf, size_t length) {
-    u8_t *buf = write_buf;
-    u8_t *end = buf + length;
+static int publish_get_payload(struct mqtt_client *c, uint8_t *write_buf, size_t length) {
+    uint8_t *buf = write_buf;
+    uint8_t *end = buf + length;
 
     if (length > sizeof(payload_buf)) {
         return -EMSGSIZE;
@@ -431,7 +431,7 @@ bool iotex_mqtt_is_connected(void) {
 }
 
 const uint8_t *iotex_mqtt_get_client_id() {
-    static u8_t client_id_buf[CLIENT_ID_LEN + 1] = { 0 };
+    static uint8_t client_id_buf[CLIENT_ID_LEN + 1] = { 0 };
 #if !defined(CONFIG_CLOUD_CLIENT_ID)
     if (client_id_buf[0] == 0) {
         snprintf(client_id_buf, sizeof(client_id_buf), "%s", iotex_modem_get_imei());
@@ -445,7 +445,7 @@ const uint8_t *iotex_mqtt_get_client_id() {
 int iotex_mqtt_publish_query(struct mqtt_client *client, enum mqtt_qos qos, char *data, int len)
 {
     struct mqtt_publish_param param;
-    u8_t pub_topic[MQTT_TOPIC_SIZE];
+    uint8_t pub_topic[MQTT_TOPIC_SIZE];
 
     iotex_mqtt_query_topic(pub_topic, sizeof(pub_topic));
     param.message.topic.qos = qos;
@@ -465,7 +465,7 @@ int iotex_mqtt_publish_query(struct mqtt_client *client, enum mqtt_qos qos, char
 int iotex_mqtt_publish_ownership(struct mqtt_client *client, enum mqtt_qos qos, char *data, int len)
 {
     struct mqtt_publish_param param;
-    u8_t pub_topic[MQTT_TOPIC_SIZE];
+    uint8_t pub_topic[MQTT_TOPIC_SIZE];
 
     iotex_mqtt_get_ownership_topic(pub_topic, sizeof(pub_topic));
     param.message.topic.qos = qos;
@@ -483,7 +483,7 @@ int iotex_mqtt_publish_ownership(struct mqtt_client *client, enum mqtt_qos qos, 
 
 int iotex_mqtt_publish_data(struct mqtt_client *client, enum mqtt_qos qos, char *data, int len) {
     struct mqtt_publish_param param;
-    u8_t pub_topic[MQTT_TOPIC_SIZE];
+    uint8_t pub_topic[MQTT_TOPIC_SIZE];
     uint8_t *topic = NULL;
 
     topic = iotex_get_truStreamTopic();
@@ -506,7 +506,7 @@ int iotex_mqtt_publish_data(struct mqtt_client *client, enum mqtt_qos qos, char 
 int iotex_mqtt_heart_beat(struct mqtt_client *client, enum mqtt_qos qos)
 {
     struct mqtt_publish_param param;
-    u8_t pub_topic[MQTT_TOPIC_SIZE];
+    uint8_t pub_topic[MQTT_TOPIC_SIZE];
     int len;
     uint8_t payload[100];
 
@@ -527,7 +527,7 @@ int iotex_mqtt_heart_beat(struct mqtt_client *client, enum mqtt_qos qos)
 int iotex_mqtt_configure_upload(struct mqtt_client *client, enum mqtt_qos qos)
 {
     struct mqtt_publish_param param;
-    u8_t pub_topic[MQTT_TOPIC_SIZE];
+    uint8_t pub_topic[MQTT_TOPIC_SIZE];
     uint8_t payload[300];
     int len;
 
