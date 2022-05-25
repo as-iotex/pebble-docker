@@ -9,7 +9,12 @@
             "options": {
                 "cwd": "${workspaceRoot}"
             },
-            "problemMatcher": []
+            "problemMatcher": [],
+            "group": 
+            {
+                "kind": "build",
+                "isDefault": true
+            }
         },
         {
             "type": "shell",
